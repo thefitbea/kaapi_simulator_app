@@ -1,0 +1,31 @@
+
+https://developer.home-connect.com/applications/5BEDC2D09B31492D1ABD3EB62F95C0135503FD564C3D16643D3039C60D79F526
+
+
+kaapi_simulator_app
+Created 2025-06-25| Last Modified 2025-06-25
+Access
+
+Private
+Private access is limited to a single Home Connect user account as defined.
+
+Home Connect user account for testing
+
+harikrishnan_n@outlook.com Add more
+This Home Connect user account has been configured in your profile. You can override it for this application.
+
+OAuth Flow
+
+Authorization Code Grant Flow
+
+Client ID
+
+5BEDC2D09B31492D1ABD3EB62F95C0135503FD564C3D16643D3039C60D79F526
+
+Client Secret (required)
+
+72755115996B347174A909149024809A8A1481EDE58B95AF940E834F3CD788BD
+
+Redirect URIs
+
+http://localhost
