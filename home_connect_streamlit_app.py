@@ -12,8 +12,13 @@ REDIRECT_URI = "http://localhost"
 HAID = "BOSCH-HCS06COM1-D70390681C2C"
 
 st.set_page_config(page_title="Tamil Filter Kaapi Simulator", layout="centered")
+
+# -- Branding and Title --
+st.image("http://www.bsh-group.de/images/logo.jpg", width=150)
+st.image("https://thumbs.dreamstime.com/z/chaitea-274209868.jpg?ct=jpeg", width=150)
 st.markdown("# ☕ Tamil Filter Kaapi Simulator")
-st.markdown("Powered by Home Connect (🔷 Blue Simulator)")
+st.markdown("Powered by Home Connect (BSH)")
+st.image("https://miro.medium.com/v2/resize:fit:4800/format:webp/1*kIzzLmnb1gBaRexyhI-Wew.jpeg", width=300)
 
 # Step 1: OAuth link
 params = {
@@ -41,14 +46,21 @@ if st.button("⚙️ Generate Token"):
             "client_secret": CLIENT_SECRET
         }
     )
+    try:
+        resp_json = resp.json()
+    except Exception as e:
+        st.error(f"❌ Failed to parse response JSON: {e}")
+        resp_json = {}
+
     if resp.status_code == 200:
-        token = resp.json().get("access_token")
+        token = resp_json.get("access_token")
         st.session_state['access_token'] = token
         st.success("✅ Access Token generated — pasted below!")
         st.code(token)
     else:
-        err = resp.json().get("error", {})
-        st.error(f"❌ {resp.status_code} {err.get('key')} — {err.get('description')}")
+        key = resp_json.get("error", {}).get("key", "Unknown")
+        desc = resp_json.get("error", {}).get("description", "No description available")
+        st.error(f"❌ {resp.status_code} {key} — {desc}")
 
 # Step 3: Use the token to brew
 st.markdown("## 3. Brew Filter Kaapi")
@@ -77,7 +89,12 @@ if access_token:
             st.dataframe(pd.DataFrame(log))
             st.balloons()
         else:
-            err = resp.json().get("error", {})
-            st.error(f"❌ {resp.status_code} {err.get('key')} — {err.get('description')}")
+            try:
+                error = resp.json().get("error", {})
+                key = error.get("key", "Unknown")
+                desc = error.get("description", "No description available")
+                st.error(f"❌ {resp.status_code} {key} — {desc}")
+            except Exception as e:
+                st.error(f"❌ {resp.status_code} Unexpected error: {e}")
 else:
     st.info("Generate an access token above to begin brewing.")
