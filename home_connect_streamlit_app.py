@@ -5,7 +5,6 @@ import pandas as pd
 from urllib.parse import urlencode
 
 # -- Configuration --
-
 API_BASE = "https://simulator.home-connect.com"
 CLIENT_ID = "5BEDC2D09B31492D1ABD3EB62F95C0135503FD564C3D16643D3039C60D79F526"
 CLIENT_SECRET = "72755115996B347174A909149024809A8A1481EDE58B95AF940E834F3CD788BD"
@@ -14,27 +13,39 @@ HAID = "BOSCH-HCS06COM1-D70390681C2C"
 
 st.set_page_config(page_title="Tamil Filter Kaapi Simulator", layout="wide")
 
-# -- Custom Background Styling with Overlay and Minimal UI Font --
+# -- Custom Styling --
 st.markdown(
-    f"""
+    """
     <style>
-    html, body, [class*="css"]  {{
-        font-family: 'Segoe UI', sans-serif;
-    }}
-    .stApp {{
-        background-image: url("https://miro.medium.com/v2/resize:fit:4800/format:webp/1*kIzzLmnb1gBaRexyhI-Wew.jpeg");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
+    @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap');
+    html, body, [class*="css"] {
+        font-family: 'Quicksand', sans-serif;
+    }
+    .stApp {
+        background: linear-gradient(120deg, #f8f4e3 0%, #fffaf0 100%) no-repeat center center fixed;
         padding: 2rem;
-    }}
-    .title-box {{
-        background-color: rgba(255, 255, 255, 0.8);
-        padding: 1rem 2rem;
-        border-radius: 8px;
+    }
+    .title-box {
+        background-color: #ffffffcc;
+        padding: 1.5rem;
+        border-radius: 10px;
         text-align: center;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
         margin-bottom: 2rem;
-    }}
+    }
+    .stTextInput>div>div>input {
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        padding: 0.5rem;
+    }
+    .stButton>button {
+        background-color: #6c584c;
+        color: white;
+        font-weight: 600;
+        border-radius: 6px;
+        padding: 0.5rem 1rem;
+        margin-top: 1rem;
+    }
     </style>
     <div class="title-box">
         <img src="http://www.bsh-group.de/images/logo.jpg" width="120">
@@ -54,12 +65,12 @@ params = {
     "state": "xyz"
 }
 auth_url = f"{API_BASE}/security/oauth/authorize?{urlencode(params)}"
-st.subheader("1. Get OAuth Code")
-st.markdown(f"[Click here to log in and get your authorization code]({auth_url})")
+st.subheader("Step 1: Authorize Application")
+st.markdown(f"<a href='{auth_url}' target='_blank'>Click here to authorize and get your code</a>", unsafe_allow_html=True)
 
 # Step 2: Token exchange helper
-st.subheader("2. Exchange Code for Access Token")
-code = st.text_input("Paste the code from the redirected URL (after ?code=)", value="", key="code_input")
+st.subheader("Step 2: Generate Access Token")
+code = st.text_input("Paste the code from the redirected URL (without ?code=)", value="")
 if st.button("Generate Access Token"):
     resp = requests.post(
         f"{API_BASE}/security/oauth/token",
@@ -80,7 +91,7 @@ if st.button("Generate Access Token"):
     if resp.status_code == 200:
         token = resp_json.get("access_token")
         st.session_state['access_token'] = token
-        st.success("Access Token generated!")
+        st.success("Access Token generated successfully!")
         st.code(token)
     else:
         key = resp_json.get("error", {}).get("key", "Unknown")
@@ -88,10 +99,10 @@ if st.button("Generate Access Token"):
         st.error(f"{resp.status_code} {key} — {desc}")
 
 # Step 3: Use the token to brew
-st.subheader("3. Brew Filter Kaapi")
+st.subheader("Step 3: Start Brewing Kaapi")
 access_token = st.session_state.get('access_token', '')
 if access_token:
-    if st.button("Start Brewing"):
+    if st.button("Brew Filter Kaapi"):
         headers = {
             "Authorization": f"Bearer {access_token}",
             "Content-Type": "application/vnd.bsh.sdk.v1+json",
@@ -100,7 +111,7 @@ if access_token:
         payload = {"data": {"key": "ConsumerProducts.CoffeeMaker.Program.Coffee.Espresso"}}
         resp = requests.put(f"{API_BASE}/api/homeappliances/{HAID}/programs/active", headers=headers, json=payload)
         if resp.status_code in (200, 204):
-            st.success("Brewing started!")
+            st.success("Your kaapi is brewing!")
             log = []
             with st.spinner("Brewing..."):
                 for _ in range(10):
@@ -122,4 +133,4 @@ if access_token:
             except Exception as e:
                 st.error(f"{resp.status_code} Unexpected error: {e}")
 else:
-    st.info("Generate an access token above to begin brewing.")
+    st.info("Please generate an access token to start brewing.")
