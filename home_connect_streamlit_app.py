@@ -10,7 +10,7 @@ HAID = "BOSCH-HCS06COM1-D70390681C2C"
 # -- UI Setup --
 st.set_page_config(page_title="Tamil Filter Kaapi Simulator", layout="centered")
 st.title("☕ Tamil Filter Kaapi Simulator")
-st.markdown("### Powered by Home Connect (🔷 Blue Simulator)")
+st.markdown("### Powered by Home Connect (BSH)")
 
 # OAuth link section
 oauth_url = (
