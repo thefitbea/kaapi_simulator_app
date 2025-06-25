@@ -13,12 +13,25 @@ HAID = "BOSCH-HCS06COM1-D70390681C2C"
 
 st.set_page_config(page_title="Tamil Filter Kaapi Simulator", layout="centered")
 
+# -- Custom Background Styling --
+st.markdown(
+    f"""
+    <style>
+    .stApp {{
+        background-image: url("https://miro.medium.com/v2/resize:fit:4800/format:webp/1*kIzzLmnb1gBaRexyhI-Wew.jpeg");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }}
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 # -- Branding and Title --
 st.image("http://www.bsh-group.de/images/logo.jpg", width=150)
-st.image("https://thumbs.dreamstime.com/z/chaitea-274209868.jpg?ct=jpeg", width=150)
 st.markdown("# ☕ Tamil Filter Kaapi Simulator")
 st.markdown("Powered by Home Connect (BSH)")
-st.image("https://miro.medium.com/v2/resize:fit:4800/format:webp/1*kIzzLmnb1gBaRexyhI-Wew.jpeg", width=300)
 
 # Step 1: OAuth link
 params = {
